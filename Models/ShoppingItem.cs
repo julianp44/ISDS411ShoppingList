@@ -1,10 +1,12 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System.Text.Json.Serialization;
+
 namespace ShoppingListApi.Models;
+
 public class ShoppingItem
 {
-    [BsonItem]
+    [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string? Id { get; set; }
 
@@ -17,4 +19,4 @@ public class ShoppingItem
     public bool Selected { get; set; }
 
     public string Description { get; set; } = null!;
-    
+}
