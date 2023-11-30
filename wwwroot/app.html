@@ -1,0 +1,194 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Mamazon ShoppingLists</title>
+    <style>
+        /* Global Font */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        /* Headers */
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            margin-top: 10px;
+        }
+
+        /* Form container */
+        #NewItemForm, #SearchForm {
+            max-width: 275px;
+            margin: 0 auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: lightyellow;
+        }
+
+        /* Form label */
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Form input fields  */
+        input[type="text"], #idInput {
+            width: 250px;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid black;
+            border-radius: 3px;
+        }
+
+        /* Submit button */
+        input[type="submit"] {
+            background-color: red;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Summary list */
+        #Summary {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding: 10px;
+            max-width:250px;
+        }
+
+            /* Individual ShoppingList item and search results */
+            #Summary li, .ShoppingList-details {
+                flex: auto;
+                margin-left: 10px;
+                margin-right: 10px;
+                margin-bottom: 20px;
+                min-width: 300px;
+            }
+
+        /* ShoppingList details */
+        .ShoppingList-details {
+            padding: 10px;
+            border: 1px solid black;
+            background-color: lightblue;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Mamazon ShoppingLists Inventory System</h1>
+        <hr />
+        <h2>Add A New ShoppingList</h2>
+        <form id="NewItemForm">
+            <label for="NB_Name">Name:</label>
+            <input type="text" id="NB_Name" name="Name" required />
+
+            <label for="NB_Price">Price:</label>
+            <input type="text" id="NB_Price" name="Price" required />
+
+            <label for="NB_Category">Category:</label>
+            <input type="text" id="NB_Category" name="Category" required />
+
+            <label for="NB_Author">Author:</label>
+            <input type="text" id="NB_Author" name="Author" required />
+
+            <label for="NB_JacketMaterial">Jacket Material:</label>
+            <input type="text" id="NB_JacketMaterial" name="JacketMaterial" required />
+
+            <input type="submit" value="Submit">
+        </form>
+        <hr />
+        <h2>Available ShoppingLists</h2>
+        <ul id="Summary"></ul>
+        <hr />
+        <h2>Search ShoppingList Properties By Id</h2>
+        <form id="SearchForm">
+            <label for="idInput">ShoppingList Id Number:</label>
+            <input type="text" id="idInput" name="Id" required />
+            <input type="submit" value="Search" />
+        </form>
+        <div id="searchedItem"></div>
+    </main>
+
+    <script>
+        document.querySelector('#NewItemForm').addEventListener('submit', function (e) { //adds a new ShoppingList using the form
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch('api/ShoppingLists', {
+                method: 'POST',
+                body: JSON.stringify(Object.fromEntries(formData)),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            let bookList = document.getElementById('Summary');
+            bookList.innerHTML = "";// clears 'Summary'
+            getShoppingLists();
+        });
+
+        async function getShoppingLists() {               //gets books from the database
+            let books = await fetch('api/ShoppingLists');
+            books = await books.json();
+
+            if (books.length > 0) {
+                renderShoppingLists(books);
+            } else {
+                console.log("No books found!");
+            }
+
+        }
+
+        function renderShoppingLists(books) {    //Displays ShoppingList names on html page under available books
+            let bookList = document.getElementById('Summary');
+            bookList.innerHTML = "";// clears 'Summary'
+
+
+
+            books.forEach((ShoppingList) => {
+                let template = `
+                    <div class="ShoppingList-details">
+                        <strong>Name:</strong> <em>${ShoppingList.Name}</em>
+                    </div>
+                `;
+                bookList.insertAdjacentHTML("beforeend", template);
+            });
+        }
+
+        document.querySelector('#SearchForm').addEventListener('submit', function (e) { //display properties of a ShoppingList by searching ID with a form
+            e.preventDefault();
+            const id = document.querySelector('#idInput').value;
+            fetch(`api/ShoppingLists/${id}`, {            // Send a GET request
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {                // Display the search results
+
+                    const searchedItem = document.getElementById('searchedItem');
+
+                    if (data) {
+
+                        searchedItem.innerHTML = `
+                                <div class="ShoppingList-details">
+                                    <strong>Name:</strong> <em>${data.Name}</em><br>
+                                    <strong>Price:</strong> <em>$${data.Price}</em><br>
+                                    <strong>Category:</strong> <em>${data.Category}</em><br>
+                                    <strong>Author:</strong> <em>${data.Author}</em><br>
+                                    <strong>Jacket Material:</strong> <em>${data.JacketMaterial}</em><br>
+                                    <button class="delete-button">Delete</button>
+                                </div>
+                            `;
+                    } else {
+                        searchedItem.innerHTML = "ShoppingList not found.";
+                    }
+                })
+        });
+
+        getShoppingLists();
+    </script>
+</body>
+</html>

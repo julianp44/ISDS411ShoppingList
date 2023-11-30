@@ -1,0 +1,30 @@
+[{
+  "_id": {
+    "$oid": "6534d2899bfda3297167c0b2"
+  },
+  "Name": "Clean Code",
+  "Price": 43.15,
+  "Category": "Computers",
+  "Author": "Robert C. Martin",
+  "JacketMaterial": "Leather"
+},
+{
+  "_id": {
+    "$oid": "6534d6079bfda3297167c0b3"
+  },
+  "Name": "Ethical Hackers Guide to Cybersecurity",
+  "Price": 999999.99,
+  "Category": "Computers",
+  "Author": "Julian Posadas",
+  "JacketMaterial": "Steel"
+},
+{
+  "_id": {
+    "$oid": "6535a191d52bc3b541d53e6e"
+  },
+  "Name": "Design Patterns",
+  "Price": "54.93",
+  "Category": "Computers",
+  "Author": "Ralph Johnson",
+  "JacketMaterial": "Paper"
+}]
