@@ -17,3 +17,4 @@ public class ShoppingItem
     public bool Selected { get; set; }
 
     public string Description { get; set; } = null!;
+    
